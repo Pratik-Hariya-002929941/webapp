@@ -1,0 +1,44 @@
+name: Maven CI/CD
+
+on:
+  #Manually trigger workflow runs
+  workflow_dispatch:
+  #Trigger the workflow on push from the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    # - name: Maven build
+    #   run: cd SpringBootApplication && mvn clean install
+
+    - name: Cache Maven packages
+      #This action allows caching dependencies and build outputs to improve workflow execution time.
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    #Build maven
+    - name: Build with Maven and Test
+      run: cd SpringBootApplication && mvn clean install && mvn -X test
+    #Run Tests
+    # - name: Run Tests
+      # run: mvn -X test
+
+
+
+    
