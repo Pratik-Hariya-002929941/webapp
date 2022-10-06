@@ -8,7 +8,7 @@
 
 # Steps to execute the Assignment
 
-# Install IntelliJ IDEA Ultimate  
+# Install IntelliJ IDEA Ultimate   
 
 # Clone reporistory using following command : git clone https://github.com/PratikHariya/webapp-personal.git
 
