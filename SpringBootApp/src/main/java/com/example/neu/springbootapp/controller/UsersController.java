@@ -60,6 +60,11 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(!users.getUsername().equals(userName)){
+            jsonObj.put("error", "You are not authorized to updated");
+            return new ResponseEntity(jsonObj, HttpStatus.FORBIDDEN);
+        }
+
         if(!BCrypt.checkpw(password, users.getPassword()) || !users.getUsername().equals(userName)) {
             jsonObj.put("error", "User is not Authorized");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
@@ -91,6 +96,31 @@ public class UsersController {
 
         if(account.getAccountUpdated() != null) {
             jsonObj.put("error", "Account Updated is a readonly field");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(account.getPassword() == null || account.getPassword().equals("")) {
+            jsonObj.put("error", "Password cannot be empty");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(account.getFirstName() == null || account.getFirstName().equals("")) {
+            jsonObj.put("error", "First Name cannot be empty");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(account.getLastName() == null || account.getLastName().equals("")) {
+            jsonObj.put("error", "Last Name cannot be empty");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users!= null && !users.getUsername().equals("") && !users.getUsername().contains("@") && !users.getUsername().contains(".")) {
+            jsonObj.put("error", "Username must be in the form of email");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users!= null && users.getPassword() != null && users.getPassword().isEmpty()) {
+            jsonObj.put("error", "Password cannot be empty");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
@@ -128,6 +158,11 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(!accountDetails.getUsername().equals(username)){
+            jsonObj.put("error", "You are not authorized to updated");
+            return new ResponseEntity(jsonObj, HttpStatus.FORBIDDEN);
+        }
+
         if(!BCrypt.checkpw(password, accountDetails.getPassword())  || !accountDetails.getUsername().equals(username)) {
             jsonObj.put("error", "User is not Authorized");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
@@ -150,6 +185,16 @@ public class UsersController {
 
         if(users.getAccountUpdated() != null) {
             jsonObj.put("error", "Can not set account update time");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users!= null && users.getUsername() != null && !users.getUsername().equals("") && !users.getUsername().contains("@") && !users.getUsername().contains(".")) {
+            jsonObj.put("error", "Username must be in the form of email");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users.getPassword() == null || users.getPassword().equals("")) {
+            jsonObj.put("error", "Password cannot be empty");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
