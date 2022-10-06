@@ -4,20 +4,28 @@
 
 # NAME : PRATIK HARIYA
 
-# API URL : localhost:8080/check
-
 # Steps to execute the Assignment
 
-# Install IntelliJ IDEA Ultimate   
+    Install IntelliJ IDEA Ultimate
+    Clone reporistory using following command 
+    git clone https://github.com/PratikHariya/webapp-personal.git
+    Open the projectin the reporirory using IntelliJ and run it to check if the API is returning response code 200
 
-# Clone reporistory using following command : git clone https://github.com/PratikHariya/webapp-personal.git
+### Technologies
+     Programming Languages : Java
+     Frameworks : SpringBoot
+     Tools : Postman, IntelliJ IDEA Ultimate
+     Microservice : REST API
 
-# Open the projectin the reporirory using IntelliJ and run it to check if the API is returning response code 200
+### APIs
 
-# Programming Languages : Java
+     post api
+     http://localhost:8080/v1/account
 
-# Frameworks : SpringBoot
+     get api
+     http://localhost:8080/v1/account/{accountid}
 
-# Tools : Postman, IntelliJ IDEA Ultimate
+     put api
+     http://localhost:8080/v1/account/{accountid}
 
-# Microservice : REST API
+     API URL : localhost:8080/check
