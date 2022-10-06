@@ -34,7 +34,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     #Build maven
     - name: Build with Maven and Test
-      run: cd SpringBootApplication && mvn clean install && mvn -X test
+      run: cd SpringBootApp && mvn clean install && mvn -X test
     #Run Tests
     # - name: Run Tests
       # run: mvn -X test
