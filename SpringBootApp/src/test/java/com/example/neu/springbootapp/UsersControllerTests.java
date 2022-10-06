@@ -45,9 +45,12 @@ public class UsersControllerTests {
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post("/v1/account")
                 .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectWriter.writeValueAsString(users));
 
-        mockMvc.perform(mockHttpServletRequestBuilder).andExpect(status().isBadRequest());
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(status().isBadRequest());
+
     }
 }
