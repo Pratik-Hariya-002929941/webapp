@@ -5,7 +5,7 @@ sudo apt-get upgrade -y
 sudo apt-get install nginx -y
 sudo apt-get clean
 
-sudo apt install openjdk-17-jre-headless -y
+sudo apt install openjdk-11-jre-headless -y
 sudo apt install maven -y
 sudo apt install mysql-server -y
 sudo apt install tomcat9 tomcat9-admin -y
