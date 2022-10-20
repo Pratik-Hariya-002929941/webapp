@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SpringBootAppController {
 
-    @RequestMapping("/check")
+    @RequestMapping("/healtz")
     @ResponseStatus(code = HttpStatus.OK)
     public void appCheck(){
         return;

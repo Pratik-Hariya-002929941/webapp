@@ -51,6 +51,12 @@ public class UsersController {
         }
 
         String pair=new String(Base64.decodeBase64(authorization.substring(6)));
+
+        if(pair.split(":").length < 2){
+            jsonObj.put("error", "Username and Password can not be empty");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
         String userName =pair.split(":")[0];
         String password= pair.split(":")[1];
         Users users = usersRepository.findById(id);
@@ -144,6 +150,12 @@ public class UsersController {
         }
 
         String pair=new String(Base64.decodeBase64(authorization.substring(6)));
+
+        if(pair.split(":").length < 2){
+            jsonObj.put("error", "Username and Password can not be empty");
+            return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
         String username=pair.split(":")[0];
         String password= pair.split(":")[1];
         Users accountDetails = usersRepository.findById(id);
