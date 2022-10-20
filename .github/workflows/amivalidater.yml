@@ -1,0 +1,39 @@
+name: Packer Validator
+on:
+# For mannually triggering workflow runs
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  # Test's job
+  packersyntaxcheck:
+    name: packer validation
+    # Runs on Ubuntu using the latest version
+    runs-on: ubuntu-latest
+    steps:
+      # checkout against code
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: validate template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          working_directory: packer
+          target: ami.pkr.hcl
+
+      - name: format check
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: fmt
+          working_directory: packer
+          target: ami.pkr.hcl
+
+
+
+
+
+    

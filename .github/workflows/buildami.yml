@@ -1,0 +1,76 @@
+name: AMI build
+
+on:
+  # Trigger the workflow action on push
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow mannually 
+  workflow_dispatch:
+
+jobs:
+  #  Creting jar file and saving it to webservice folder
+  jarcreation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Create webservice folder
+        run: mkdir webservice
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Creating jar for application
+        run: cd SpringBootApp  && mvn clean && mvn package
+
+      - name: Check jar file created or not
+        run: ls -la && cd SpringBootApp && cd target && ls -la
+
+      - name: Copy jar file to webservice folder
+        run: cp SpringBootApp/target/SpringBootApp-0.0.1-SNAPSHOT.war ./webservice
+
+      - name: switch to webservice folder
+        run: cd webservice && ls -la
+
+      - name: Save the webservice folder with jar file to artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: webservice
+          path: ${{ github.workspace }}/webservice
+
+  # Build an AMI 
+  amibuild:
+    runs-on: ubuntu-latest
+    needs: jarcreation
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: webservice
+
+      - name: Display structure of downloaded files
+        run: ls -la
+
+      - name: Packer AMI Build
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          working_directory: packer
+          target: ami.pkr.hcl
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY_ID: ${{ secrets.AWS_SECRET_KEY_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_SOURCE_AMI: ${{ secrets.AWS_SOURCE_AMI }}
+          AWS_SUBNET_ID: ${{ secrets.AWS_SUBNET_ID }}
+          AWS_SSH_USERNAME: ${{ secrets.AWS_SSH_USERNAME }}
+          AMI_USERS: ${{ secrets.AMI_USERS }}
+          AWS_VPC_ID: ${{ secrets.AWS_VPC_ID }}
+        
+
+
+
+

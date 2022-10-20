@@ -5,6 +5,7 @@ import com.example.neu.springbootapp.Annotation.ReadOnly;
 import com.example.neu.springbootapp.Annotation.UniqueEmail;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -21,7 +22,8 @@ public class Users {
 
 //    @ReadOnly
     @Id
-    @GeneratedValue(strategy =  GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
     @NotNull(message = "First name cannot be null")
