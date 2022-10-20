@@ -9,15 +9,15 @@ on:
 jobs:
   # Test's job
   packersyntaxcheck:
-    name: validation of packer
+    name: packer validation
     # Runs on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
       # checkout against code
-      - name: repository checkout
+      - name: checkout repo
         uses: actions/checkout@v2
 
-      - name: template validation
+      - name: validate template
         uses: hashicorp/packer-github-actions@master
         with:
           command: validate
@@ -25,7 +25,7 @@ jobs:
           working_directory: packer
           target: ami.pkr.hcl
 
-      - name: check format
+      - name: format check
         run: ls -la && cd packer && packer fmt --check ami.pkr.hcl
 
 
