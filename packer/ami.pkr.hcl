@@ -79,8 +79,8 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "file" {
-    source      = "../SpringBootApplication-0.0.1-SNAPSHOT.war"
-    destination = "/tmp/SpringBootApplication-0.0.1-SNAPSHOT.war"
+    source      = "../SpringBootApp-0.0.1-SNAPSHOT.war"
+    destination = "/tmp/SpringBootApp-0.0.1-SNAPSHOT.war"
   }
 
   provisioner "shell" {
