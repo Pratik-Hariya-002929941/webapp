@@ -9,7 +9,7 @@ variable "source_ami" {
 }
 
 variable "ssh_username" {
-  type    = string
+   type    = string
   default = env("AWS_SSH_USERNAME")
 }
 
