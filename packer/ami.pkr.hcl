@@ -16,7 +16,7 @@ variable "ssh_username" {
 variable "subnet_id" {
   type    = string
   default = env("AWS_SUBNET_ID")
-} 
+}
 
 variable "aws_vpc_id" {
   type    = string
