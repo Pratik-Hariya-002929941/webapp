@@ -1,5 +1,6 @@
 package com.example.neu.springbootapp.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.example.neu.springbootapp.model.Documents;
 import com.example.neu.springbootapp.model.Users;
 import com.example.neu.springbootapp.repository.DocumentsRepository;
@@ -34,6 +35,8 @@ public class DocumentController {
     private final DocumentsRepository documentsRepository;
     @Autowired
     private final UsersRepository usersRepository;
+    @Autowired
+    private AmazonS3 s3client;
 
     private String bucketName = System.getenv("AWS_SBUCKET");
 
@@ -92,7 +95,7 @@ public class DocumentController {
 
         documents.setUserId(users.getId());
         documents.setName(filename);
-        documents.setS3_bucket_path(bucketName);
+        documents.setS3_bucket_path(s3client.getUrl(bucketName, filename).toString());
         Documents savedDocument = documentsRepository.save(documents);
 
         return new ResponseEntity(savedDocument, HttpStatus.CREATED);
