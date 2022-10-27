@@ -182,7 +182,7 @@ public class DocumentController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
-        if(documents.getUserId() != users.getId()) {
+        if(documents.getUserId().equals(users.getId())) {
             jsonObj.put("error", "Cannot access document of different user");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
@@ -234,7 +234,7 @@ public class DocumentController {
             return new ResponseEntity(jsonObj, HttpStatus.NOT_FOUND);
         }
 
-        if(documents.getUserId() != users.getId()) {
+        if(documents.getUserId().equals(users.getId())) {
             jsonObj.put("error", "Cannot access document of different user");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
