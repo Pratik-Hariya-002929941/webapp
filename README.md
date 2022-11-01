@@ -39,5 +39,5 @@
      get api to get single document
      http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents/{doc_id}
 
-     delete api to delete single document
+     delete api to delete single document 
      http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents/{doc_id}
