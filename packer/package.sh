@@ -18,4 +18,4 @@ sudo mv /tmp/SpringBootApp-0.0.1-SNAPSHOT.war ~/SpringBootApp-0.0.1-SNAPSHOT.war
 sudo mv ~/SpringBootApp-0.0.1-SNAPSHOT.war ~/SpringBootApp.war
 sudo rm -rf /var/lib/tomcat9/webapps/ROOT
 sudo cp ~/SpringBootApp.war /var/lib/tomcat9/webapps
-sudo mv /var/lib/tomcat9/webapps/webapp.war /var/lib/tomcat9/webapps/ROOT.war
+sudo mv /var/lib/tomcat9/webapps/SpringBootApp.war /var/lib/tomcat9/webapps/ROOT.war
