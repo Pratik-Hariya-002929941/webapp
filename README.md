@@ -22,10 +22,23 @@
      post api
      http://localhost:8080/v1/account         
 
-     get api
-     http://localhost:8080/v1/account/{accountid}
 
-     put api
-     http://localhost:8080/v1/account/{accountid}
+     get api to get users
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/account/{accountid}
 
-     API URL : localhost:8080/check
+     put api to update users
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/account/{accountid}
+
+     API URL : <HOST_ADDRESS>:8080/SpringBootApp/check
+
+     post api to upload documents
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents
+
+     get api to get all documents
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents
+
+     get api to get single document
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents/{doc_id}
+
+     delete api to delete single document 
+     http://<HOST_ADDRESS>:8080/SpringBootApp/v1/documents/{doc_id}

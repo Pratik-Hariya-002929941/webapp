@@ -2,11 +2,9 @@ package com.example.neu.springbootapp.controller;
 
 import com.example.neu.springbootapp.model.Users;
 import com.example.neu.springbootapp.repository.UsersRepository;
-import org.apache.catalina.User;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
