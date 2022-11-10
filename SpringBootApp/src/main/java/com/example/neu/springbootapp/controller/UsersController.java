@@ -1,9 +1,11 @@
 package com.example.neu.springbootapp.controller;
 
+import com.example.neu.springbootapp.config.StatsdClient;
 import com.example.neu.springbootapp.model.Users;
 import com.example.neu.springbootapp.repository.UsersRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.simple.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -27,9 +30,20 @@ public class UsersController {
     @Autowired
     private final UsersRepository usersRepository;
 
-    private static final Logger logger = Logger.getLogger(UsersController.class.getName());
+    //private static final Logger logger = Logger.getLogger(UsersController.class.getName());
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    private static StatsdClient statsDClient;
+
+    static {
+        try {
+            statsDClient = new StatsdClient("localhost", 8125);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    Logger logger = LoggerFactory.getLogger(UsersController.class);
     public UsersController(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
@@ -37,6 +51,9 @@ public class UsersController {
     @GetMapping("/{accountId}")
     public ResponseEntity<Users> getUserAccountInformation(@PathVariable(value = "accountId") UUID id,
                                                            @RequestHeader Map<String, String> headers) {
+
+        logger.info("Reached: GET /v1/account/" + id);
+        statsDClient.increment("endpoint.http.getAccount");
 
         String authorization = null;
         JSONObject jsonObj =new JSONObject();
@@ -57,6 +74,9 @@ public class UsersController {
 
         String userName =pair.split(":")[0];
         String password= pair.split(":")[1];
+
+        logger.info("Fetching Details for accountID: " + id);
+
         Users users = usersRepository.findById(id);
 
         if(users == null) {
@@ -74,17 +94,23 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
+        logger.info("Successfully Fetched Data: " + accountDetails);
+
         return new ResponseEntity(users, HttpStatus.OK);
     }
 
     @PostMapping("")
     public ResponseEntity createUserAccount(@Valid @RequestBody Users account){
 
+        logger.info("Reached: POST /v1/account  " + account);
+        statsDClient.increment("endpoint.http.postAccount");
+
         JSONObject jsonObj = new JSONObject();
         Users users = usersRepository.findByUsername(account.getUsername());
 
         if(users != null) {
             jsonObj.put("error", "Username must be unique ");
+            logger.error("Username already exists");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
@@ -131,19 +157,27 @@ public class UsersController {
         String password = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
         account.setPassword(password);
         Users savedAccount = usersRepository.save(account);
+
+        logger.info("Successfully Saved Data: " + savedAccount);
+
         return new ResponseEntity(savedAccount, HttpStatus.OK);
     }
 
     @PutMapping("/{accountId}")
     public ResponseEntity<Users> updateAccount(@PathVariable(value = "accountId") UUID id, @RequestBody Users users, @RequestHeader Map<String, String> headers){
 
+        logger.info("Reached: PUT /v1/account/" + id);
+        statsDClient.increment("endpoint.http.putAccount");
+
         JSONObject jsonObj = new JSONObject();
         String authorization = null;
 
         if(headers.containsKey("authorization"))
             authorization = headers.get("authorization");
+        logger.info("Authorization Method Used: " + authorization.split(" ")[0]);
         else{
             jsonObj.put("error", "Missing Authorization Header ");
+            logger.info("Missing Authorization Header");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
@@ -151,50 +185,62 @@ public class UsersController {
 
         if(pair.split(":").length < 2){
             jsonObj.put("error", "Username and Password can not be empty");
+            logger.info("Username and Password can not be empty");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
         String username=pair.split(":")[0];
         String password= pair.split(":")[1];
+
+        logger.info("Updating Details for accountID: " + id);
+
         Users accountDetails = usersRepository.findById(id);
 
         if(authorization == null){
             jsonObj.put("error", "Missing Authorization Header ");
+            logger.info("Missing Authorization Header");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
         if(accountDetails == null) {
             jsonObj.put("error", "Invalid User ID");
+            logger.info("Invalid User ID");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
         if(!accountDetails.getUsername().equals(username)){
             jsonObj.put("error", "You are not authorized to updated");
+            logger.info("You are not authorized to updated");
             return new ResponseEntity(jsonObj, HttpStatus.FORBIDDEN);
         }
 
         if(!BCrypt.checkpw(password, accountDetails.getPassword())  || !accountDetails.getUsername().equals(username)) {
             jsonObj.put("error", "User is not Authorized");
+            logger.info("User is not Authorized");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
         if( users.getUsername() != null) {
             jsonObj.put("error", "Username cannot be updated");
+            logger.info("Username cannot be updated");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
         if(users.getId() != null) {
             jsonObj.put("error", "Id can not be updated");
+            logger.info("Id can not be updated");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
         if(users.getAccountCreated() != null) {
             jsonObj.put("error", "Can not set account create time");
+            logger.info("Can not set account create time");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
         if(users.getAccountUpdated() != null) {
             jsonObj.put("error", "Can not set account update time");
+            logger.info("Can not set account update time");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
@@ -205,6 +251,7 @@ public class UsersController {
 
         if(users.getPassword() == null || users.getPassword().equals("")) {
             jsonObj.put("error", "Password cannot be empty");
+            logger.info("Password can not be empty");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
@@ -215,6 +262,9 @@ public class UsersController {
         if( users.getPassword() != null && !users.getPassword().isEmpty())
             accountDetails.setPassword(BCrypt.hashpw(users.getPassword(), BCrypt.gensalt(10)));
         Users updatedAccountDetails = usersRepository.save(accountDetails);
+
+        logger.info("Successfully Updated Data: " + updatedAccountDetails);
+
         return new ResponseEntity(updatedAccountDetails, HttpStatus.OK);
     }
 }
