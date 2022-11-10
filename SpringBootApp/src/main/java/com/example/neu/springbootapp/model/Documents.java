@@ -87,4 +87,13 @@ public class Documents {
     public void setS3_bucket_path(String s3_bucket_path) {
         this.s3_bucket_path = s3_bucket_path;
     }
+
+    @Override
+    public String toString(){
+        return "{ id: " + this.getId() +
+                "\n userId: " + this.getUserId() +
+                "\n filename: " + this.getName() +
+                "\n data_created: " + this.getDateCreated() +
+                "\n s3_bucket_path: " + this.getS3_bucket_path();
+    }
 }

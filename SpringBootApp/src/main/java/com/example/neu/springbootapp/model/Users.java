@@ -130,5 +130,14 @@ public class Users {
         this.accountUpdated = accountUpdated;
     }
 
-
+    @Override
+    public String toString(){
+        String obj = "{ id: " + this.getId() +
+                "\n firstname: " + this.getFirstName() +
+                "\n lastname: " + this.getLastName() +
+                "\n username: " + this.getUsername() +
+                "\n account_created: " + this.getAccountCreated() +
+                "\n account_updated: " + this.getAccountUpdated() + "\n }";
+        return obj;
+    }
 }
