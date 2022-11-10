@@ -5,6 +5,7 @@ import com.example.neu.springbootapp.model.Users;
 import com.example.neu.springbootapp.repository.UsersRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Component
 @Validated
@@ -94,7 +94,7 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
-        logger.info("Successfully Fetched Data: " + accountDetails);
+        logger.info("Successfully Fetched Data: " + users);
 
         return new ResponseEntity(users, HttpStatus.OK);
     }
