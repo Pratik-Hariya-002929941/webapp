@@ -172,10 +172,10 @@ public class UsersController {
         JSONObject jsonObj = new JSONObject();
         String authorization = null;
 
-        if(headers.containsKey("authorization"))
+        if(headers.containsKey("authorization")) {
             authorization = headers.get("authorization");
-        logger.info("Authorization Method Used: " + authorization.split(" ")[0]);
-        else{
+            logger.info("Authorization Method Used: " + authorization.split(" ")[0]);
+        }else{
             jsonObj.put("error", "Missing Authorization Header ");
             logger.info("Missing Authorization Header");
             return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
