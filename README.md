@@ -17,7 +17,7 @@
      Tools : Postman, IntelliJ IDEA Ultimate
      Microservice : REST API
 
-### APIs 
+### APIs  
 
      post api
      http://localhost:8080/v1/account         
