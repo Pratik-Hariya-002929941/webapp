@@ -17,7 +17,7 @@
      Tools : Postman, IntelliJ IDEA Ultimate
      Microservice : REST API
 
-### APIs
+### APIs 
 
      post api to create user
      http://<HOST_ADDRESS>:8080/SpringBootApp/v1/account        
