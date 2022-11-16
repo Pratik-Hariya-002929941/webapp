@@ -112,6 +112,12 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>1.12.342</version>
+        </dependency>
     </dependencies>
 
     <build>
