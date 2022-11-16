@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File> logs/csye6225.log</File>
+        <encoder>
+            <pattern>%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.example.neu.springbootapp" level="info" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+</configuration>

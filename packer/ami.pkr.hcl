@@ -83,6 +83,11 @@ build {
     destination = "/tmp/SpringBootApp-0.0.1-SNAPSHOT.war"
   }
 
+  provisioner "file" {
+    source      = "../amazon-cloudwatch-agent.json"
+    destination = "/tmp/amazon-cloudwatch-agent.json"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
