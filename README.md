@@ -20,7 +20,7 @@
 ### APIs  
 
      post api
-     http://localhost:8080/v1/account         
+     http://localhost:8080/v1/account
 
 
      get api to get users
