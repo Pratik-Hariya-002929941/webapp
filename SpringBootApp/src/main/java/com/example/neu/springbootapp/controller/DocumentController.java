@@ -103,6 +103,11 @@ public class DocumentController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(users.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
+        }
+
         if(!BCrypt.checkpw(password, users.getPassword())) {
             jsonObj.put("error", "Incorrect Password");
             logger.info("Incorrect Password");
@@ -168,6 +173,11 @@ public class DocumentController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(users.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
+        }
+
         if(!BCrypt.checkpw(password, users.getPassword())) {
             jsonObj.put("error", "Password is incorrect");
             logger.info("Password is incorrect");
@@ -222,6 +232,11 @@ public class DocumentController {
             jsonObj.put("error", "User ID not valid");
             logger.info("User ID not valid");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
         if(!BCrypt.checkpw(password, users.getPassword())) {
@@ -286,6 +301,11 @@ public class DocumentController {
             jsonObj.put("error", "User ID not valid");
             logger.info("User ID not valid");
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
+        }
+
+        if(users.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
         }
 
         if(!BCrypt.checkpw(password, users.getPassword())) {

@@ -237,6 +237,11 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(accountDetails.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
+        }
+
         if(!accountDetails.getUsername().equals(username)){
             jsonObj.put("error", "You are not authorized to updated");
             logger.info("You are not authorized to updated");
