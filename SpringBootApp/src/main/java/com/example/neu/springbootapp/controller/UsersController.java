@@ -20,10 +20,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
+import software.amazon.awssdk.services.sns.model.SnsException;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,6 +50,12 @@ public class UsersController {
 
     //private static final Logger logger = Logger.getLogger(UsersController.class.getName());
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
+    private String accessSecreteKey = System.getenv("AWS_SECRET_KEY_ID");
+    private String awsRegion = System.getenv("AWS_REGION");
+    private String awsEmailTopicArn = System.getenv("EMAIL_TOPIC_ARN");
+    private String domainName = System.getenv("DOMAIN_NAME");
 
     private static StatsdClient statsDClient;
 
@@ -168,12 +183,13 @@ public class UsersController {
         account.setPassword(password);
         Users savedAccount = usersRepository.save(account);
         logger.info("Successfully Saved Data: " + savedAccount);
+        OneTimeToken oneTimeToken = new OneTimeToken();
 
         try {
             long now = Instant.now().getEpochSecond(); // unix time
             long ttl = 60*2; // 2 minutes in sec
 
-            OneTimeToken oneTimeToken = new OneTimeToken();
+
             oneTimeToken.setEmail(savedAccount.getUsername());
             oneTimeToken.setExpiry(now+ttl);
 
@@ -187,6 +203,55 @@ public class UsersController {
         }
         catch (AmazonClientException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
+
+        logger.info("Generating sns client...");
+        SnsClient snsClient = SnsClient.builder()
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, accessSecreteKey)))
+                .region(Region.US_EAST_1)
+                .build();
+
+        HashMap<String, MessageAttributeValue> map = new HashMap<>();
+
+        map.put("emailId", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(savedAccount.getUsername())
+                .build());
+        map.put("firstName", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(savedAccount.getFirstName())
+                .build());
+        map.put("domainName", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(domainName)
+                .build());
+        map.put("expirationTime", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(Long.toString(oneTimeToken.getExpiry()))
+                .build());
+        map.put("token", MessageAttributeValue.builder()
+                .dataType("String")
+                .stringValue(oneTimeToken.getToken())
+                .build());
+
+        logger.info("token " + oneTimeToken.getToken() );
+
+        try{
+            logger.info(awsEmailTopicArn);
+            logger.info("Creating publisher object...");
+            PublishRequest requestEmail = PublishRequest.builder()
+                    .subject("Verification Email")
+                    .message("Click on link")
+                    .messageAttributes(map)
+                    .topicArn(awsEmailTopicArn)
+                    .build();
+
+            logger.info("Publishing an event...");
+            PublishResponse publishResponse = snsClient.publish(requestEmail);
+            logger.info("Successfully sent an email");
+        }catch (SnsException e) {
+            logger.error(e.awsErrorDetails().errorMessage());
+            System.exit(1);
         }
 
         return new ResponseEntity(savedAccount, HttpStatus.OK);
