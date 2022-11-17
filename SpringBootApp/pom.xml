@@ -110,7 +110,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.12.342</version>
+            <version>1.12.341</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sqs -->

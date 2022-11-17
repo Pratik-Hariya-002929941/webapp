@@ -46,7 +46,7 @@ public class UsersController {
     private final UsersRepository usersRepository;
 
     @Autowired
-            private final OneTimeTokenRepository oneTimeTokenRepository;
+    private final OneTimeTokenRepository oneTimeTokenRepository;
 
     //private static final Logger logger = Logger.getLogger(UsersController.class.getName());
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
