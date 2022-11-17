@@ -109,6 +109,11 @@ public class UsersController {
             return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
         }
 
+        if(users.isVerifiedUser() == false) {
+            jsonObj.put("error", "Not a verified user");
+            return new ResponseEntity(jsonObj, HttpStatus.UNAUTHORIZED);
+        }
+
         if(!users.getUsername().equals(userName)){
             jsonObj.put("error", "You are not authorized to updated");
             return new ResponseEntity(jsonObj, HttpStatus.FORBIDDEN);
@@ -187,7 +192,7 @@ public class UsersController {
 
         try {
             long now = Instant.now().getEpochSecond(); // unix time
-            long ttl = 60*2; // 2 minutes in sec
+            long ttl = 60*5; // 2 minutes in sec
 
 
             oneTimeToken.setEmail(savedAccount.getUsername());
