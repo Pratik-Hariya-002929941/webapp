@@ -59,10 +59,14 @@ public class Users {
     @Column(name="account_update")
     private Date accountUpdated;
 
+
+    @Column(name="verified_user")
+    private boolean verifiedUser;
+
     public Users() {
     }
 
-    public Users(UUID id, String firstName, String lastName, String username, String password, Date accountCreated, Date accountUpdated) {
+    public Users(UUID id, String firstName, String lastName, String username, String password, Date accountCreated, Date accountUpdated, boolean verifiedUser) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -70,6 +74,7 @@ public class Users {
         this.password = password;
         this.accountCreated = accountCreated;
         this.accountUpdated = accountUpdated;
+        this.verifiedUser = verifiedUser;
     }
 
     public UUID getId() {
@@ -130,6 +135,14 @@ public class Users {
         this.accountUpdated = accountUpdated;
     }
 
+    public boolean isVerifiedUser() {
+        return verifiedUser;
+    }
+
+    public void setVerifiedUser(boolean verifiedUser) {
+        this.verifiedUser = verifiedUser;
+    }
+
     @Override
     public String toString(){
         String obj = "{ id: " + this.getId() +
@@ -137,7 +150,8 @@ public class Users {
                 "\n lastname: " + this.getLastName() +
                 "\n username: " + this.getUsername() +
                 "\n account_created: " + this.getAccountCreated() +
-                "\n account_updated: " + this.getAccountUpdated() + "\n }";
+                "\n account_updated: " + this.getAccountUpdated() +
+                "\n verified_user: "+this.isVerifiedUser() + "\n }";
         return obj;
     }
 }
