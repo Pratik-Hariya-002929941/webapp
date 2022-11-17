@@ -6,6 +6,8 @@ import com.example.neu.springbootapp.model.OneTimeToken;
 import com.example.neu.springbootapp.model.Users;
 import com.example.neu.springbootapp.repository.OneTimeTokenRepository;
 import com.example.neu.springbootapp.repository.UsersRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,30 +43,34 @@ public class VerifyEmailController {
         OneTimeToken oneTimeToken;
         JSONObject jsonObj = new JSONObject();
 
+        Logger logger = LoggerFactory.getLogger(VerifyEmailController.class);
         try {
-            oneTimeToken = oneTimeTokenRepository.getOneTimeToken(email);
-
+            logger.info("Entering try block");
+            oneTimeToken = oneTimeTokenRepository.getOneTimeToken(email, token);
+            logger.info("One time toekn = "+ oneTimeToken);
             if(oneTimeToken == null) {
                 jsonObj.put("error", "Verification error");
                 return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
             }
 
             long now = Instant.now().getEpochSecond(); // unix time
-
-            if(Long.parseLong(token) < now) {
+            logger.info("db expiry = "+oneTimeToken.getExpiry());
+            logger.info("now = "+now);
+            if(oneTimeToken.getExpiry() < now) {
                 jsonObj.put("error", "Token Expired");
                 return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
             }
 
             users = usersRepository.findByUsername(email);
-
+            logger.info("Users = "+ users);
             if(users == null) {
                 jsonObj.put("error", "User not found");
                 return new ResponseEntity(jsonObj, HttpStatus.BAD_REQUEST);
             }
-            
+
             users.setVerifiedUser(true);
             usersRepository.save(users);
+            logger.info("User saved");
         }
         catch (AmazonServiceException e) {
             throw new ResponseStatusException(HttpStatus.valueOf(e.getStatusCode()), e.getMessage(), e);
