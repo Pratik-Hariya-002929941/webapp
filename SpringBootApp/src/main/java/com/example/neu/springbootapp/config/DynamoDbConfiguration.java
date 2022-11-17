@@ -12,15 +12,18 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.example.neu.springbootapp.model.OneTimeToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DynamoDbConfiguration {
 
-    private String awsAccessKey = System.getenv("AWS_ACCESS_KEY_ID");
+    @Value("${AWS_ACCESS_KEY_ID}")
+    private String awsAccessKey;
 
-    private String awsSecretKey = System.getenv("AWS_SECRET_KEY_ID");
+    @Value("${AWS_SECRET_KEY_ID}")
+    private String awsSecretKey;
 
     @Bean
     public DynamoDBMapper dynamoDBMapper() {
