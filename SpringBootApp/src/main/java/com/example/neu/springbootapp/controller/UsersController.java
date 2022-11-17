@@ -171,7 +171,7 @@ public class UsersController {
 
         try {
             long now = Instant.now().getEpochSecond(); // unix time
-            long ttl = 60 * 60 * 24; // 24 hours in sec
+            long ttl = 60*2; // 2 minutes in sec
 
             OneTimeToken oneTimeToken = new OneTimeToken();
             oneTimeToken.setEmail(savedAccount.getUsername());

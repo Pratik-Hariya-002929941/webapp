@@ -15,8 +15,8 @@ public class OneTimeTokenRepository {
         this.dynamoDBMapper = dynamoDBMapper;
     }
 
-    public OneTimeToken getOneTimeToken(String email) {
-        return dynamoDBMapper.load(OneTimeToken.class, email);
+    public OneTimeToken getOneTimeToken(String email, String token) {
+        return dynamoDBMapper.load(OneTimeToken.class, email, token);
     }
 
     public OneTimeToken createOneTimeToken(OneTimeToken oneTimeToken) {
