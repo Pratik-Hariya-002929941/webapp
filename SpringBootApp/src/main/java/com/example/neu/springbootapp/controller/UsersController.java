@@ -1,7 +1,11 @@
 package com.example.neu.springbootapp.controller;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.example.neu.springbootapp.config.StatsdClient;
+import com.example.neu.springbootapp.model.OneTimeToken;
 import com.example.neu.springbootapp.model.Users;
+import com.example.neu.springbootapp.repository.OneTimeTokenRepository;
 import com.example.neu.springbootapp.repository.UsersRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.simple.JSONObject;
@@ -15,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -30,6 +35,9 @@ public class UsersController {
     @Autowired
     private final UsersRepository usersRepository;
 
+    @Autowired
+            private final OneTimeTokenRepository oneTimeTokenRepository;
+
     //private static final Logger logger = Logger.getLogger(UsersController.class.getName());
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -44,8 +52,9 @@ public class UsersController {
     }
 
     Logger logger = LoggerFactory.getLogger(UsersController.class);
-    public UsersController(UsersRepository usersRepository) {
+    public UsersController(UsersRepository usersRepository, OneTimeTokenRepository oneTimeTokenRepository) {
         this.usersRepository = usersRepository;
+        this.oneTimeTokenRepository = oneTimeTokenRepository;
     }
 
     @GetMapping("/{accountId}")
@@ -158,7 +167,22 @@ public class UsersController {
         account.setPassword(password);
         Users savedAccount = usersRepository.save(account);
 
-        logger.info("Successfully Saved Data: " + savedAccount);
+        try {
+            OneTimeToken oneTimeToken = new OneTimeToken();
+            logger.info("Successfully Saved Data: " + savedAccount);
+
+            oneTimeToken.setEmail(savedAccount.getUsername());
+            logger.info("OneTImeToken before save: " + oneTimeToken);
+            oneTimeToken = oneTimeTokenRepository.createOneTimeToken(oneTimeToken);
+
+            logger.info("Successfully Saved OneTimeToken: " + oneTimeToken);
+        }
+        catch (AmazonServiceException e) {
+            throw new ResponseStatusException(HttpStatus.valueOf(e.getStatusCode()), e.getMessage(), e);
+        }
+        catch (AmazonClientException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
 
         return new ResponseEntity(savedAccount, HttpStatus.OK);
     }
