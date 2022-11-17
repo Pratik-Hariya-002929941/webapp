@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
@@ -166,13 +167,17 @@ public class UsersController {
         String password = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
         account.setPassword(password);
         Users savedAccount = usersRepository.save(account);
+        logger.info("Successfully Saved Data: " + savedAccount);
 
         try {
-            OneTimeToken oneTimeToken = new OneTimeToken();
-            logger.info("Successfully Saved Data: " + savedAccount);
+            long now = Instant.now().getEpochSecond(); // unix time
+            long ttl = 60 * 60 * 24; // 24 hours in sec
 
+            OneTimeToken oneTimeToken = new OneTimeToken();
             oneTimeToken.setEmail(savedAccount.getUsername());
-            logger.info("OneTImeToken before save: " + oneTimeToken);
+            oneTimeToken.setExpiry(now+ttl);
+
+            logger.info("OneTimeToken before save: " + oneTimeToken);
             oneTimeToken = oneTimeTokenRepository.createOneTimeToken(oneTimeToken);
 
             logger.info("Successfully Saved OneTimeToken: " + oneTimeToken);
