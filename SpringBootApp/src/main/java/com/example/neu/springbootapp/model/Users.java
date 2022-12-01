@@ -20,7 +20,6 @@ import java.util.UUID;
 public class Users {
 
 
-//    @ReadOnly
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type = "org.hibernate.type.UUIDCharType")
