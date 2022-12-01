@@ -1,10 +1,14 @@
 name: Packer Validator
 on:
-# For mannually triggering workflow runs
+  # For mannually triggering workflow runs
   workflow_dispatch:
   pull_request:
     branches:
-    - main
+      - main
+
+  # Trigger the workflow action on push
+  push:
+    branches: [main]
 
 jobs:
   # Test's job
@@ -27,9 +31,3 @@ jobs:
 
       - name: format check
         run: ls -la && cd packer && packer fmt --check ami.pkr.hcl
-
-
-
-
-
-    

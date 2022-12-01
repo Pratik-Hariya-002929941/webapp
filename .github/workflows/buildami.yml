@@ -69,8 +69,35 @@ jobs:
           AWS_SSH_USERNAME: ${{ secrets.AWS_SSH_USERNAME }}
           AMI_USERS: ${{ secrets.AMI_USERS }}
           AWS_VPC_ID: ${{ secrets.AWS_VPC_ID }}
-        
+          LAUNCH_TEMPLATE_NAME: ${{ secrets.LAUNCH_TEMPLATE_NAME }}
+          AUTOSCALING_GROUP_NAME: ${{ secrets.AUTOSCALING_GROUP_NAME }}
 
+      - name: Display structure of downloaded files
+        run: ls -la && ls -la ./packer
 
+      - name: Display manifest file
+        run: cat ./packer/manifest.json
 
+      - name: Extract ami id
+        run: |
+          echo "AMI_ID=$(jq -r '.builds[-1].artifact_id' ./packer/manifest.json | cut -d ":" -f2)" >> $GITHUB_ENV
 
+      - name: Configuring AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY_ID_DEMO }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Creating new version for Launch Templates
+        run: |
+          aws ec2 create-launch-template-version --launch-template-name asg_launch_config \
+          --source-version '$Latest' \
+          --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
+
+      - name: Sleep for 60 seconds
+        run: sleep 60s
+
+      - name: run autoscaling refresh
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name mystack1-asg --strategy Rolling --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName":"asg_launch_config", "Version":"$Latest"}}'
