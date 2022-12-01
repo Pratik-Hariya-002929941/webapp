@@ -100,4 +100,4 @@ jobs:
 
       - name: run autoscaling refresh
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name mystack1-asg --strategy Rolling --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName":"asg_launch_config", "Version":"$Latest"}}'
+          aws autoscaling start-instance-refresh --auto-scaling-group-name Stack6225-asg --strategy Rolling --desired-configuration '{"LaunchTemplate": {"LaunchTemplateName":"asg_launch_config", "Version":"$Latest"}}'
