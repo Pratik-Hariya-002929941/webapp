@@ -39,7 +39,7 @@ import java.util.UUID;
 @Component
 @Validated
 @RestController
-@RequestMapping("/v1/account")
+@RequestMapping("/v2/account")
 public class UsersController {
 
     @Autowired
